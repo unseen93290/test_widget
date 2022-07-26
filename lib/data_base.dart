@@ -50,7 +50,7 @@ Future<int> createCustomer(Jeux play) async {
 Future<List> getCustomers() async {
 
    var  result = await creationDataBase.query("jeux", columns: ["id", "name", "age",]);
-   return result.map((e) => Jeux.fromMap(e)).toList();
+   //return result.map((e) => Jeux.fromMap(e)).toList();
 
   return result.toList();
 }
