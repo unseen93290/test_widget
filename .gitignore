@@ -5,3 +5,4 @@ build/ios/Debug-iphonesimulator
 build/ios/iphonesimulator/Runner.app/GoogleService-Info.plist
 build/ios/iphonesimulator/Runner.app/
 build/ios/Pods.build/Release-iphonesimulator/
+build/ios/iphonesimulator/Runner.app/
