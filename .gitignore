@@ -4,3 +4,4 @@ build/ios/Debug-iphonesimulator
 .dart_tool/flutter_build
 build/ios/iphonesimulator/Runner.app/GoogleService-Info.plist
 build/ios/iphonesimulator/Runner.app/
+build/ios/Pods.build/Release-iphonesimulator/
