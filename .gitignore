@@ -1,4 +1,4 @@
 fichier.txt
-.DS_Store
+*.DS_Store
 build/ios/Debug-iphonesimulator
 .dart_tool/flutter_build
