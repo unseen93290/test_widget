@@ -1,75 +1,77 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:test_widget/data.dart';
-import 'package:test_widget/data_base.dart';
+import 'package:test_widget/add_firebase.dart';
 
-void main() {
+
+Future<void> main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(home: MyApp()) ,);
+  await Firebase.initializeApp();
+  runApp( MaterialApp( debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),home: HomePage()) ,);
 
 }
 
-
-
-class MyApp extends StatelessWidget {
-  late String text;
-
-  DatabaseJeux databaseJeux1 = DatabaseJeux();
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  Builder(
-      builder: (context) {
-        return MaterialApp(
-          home: Scaffold(
-                body: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextField(
-                      onChanged: (value) {
-                        text = value;
-                      },
-                    ),
-                    FlatButton(
-                        onPressed: () {
-                          databaseJeux1.createCustomer(Jeux(name: "Nabil",id: 0002,age: 30));
-                          //print(databaseJeux1.getListJeux().toString);
-                          Navigator.push(
-                              context, MaterialPageRoute(builder: (context) => Play()));
-
-                        },
-                        child: Text("Appuyer"),),
-
-                  ],
-
-                ),
-          ),
-        );
-      }
+    return Scaffold(
+      appBar: AppBar(title: const Text("Flutter firebase"),leading: IconButton(onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) { return const AddFirebase(); })), icon: const Icon(Icons.add)),),
+      body: const Movies(),
     );
   }
 }
 
+class Movies extends StatefulWidget {
+  const Movies({Key? key}) : super(key: key);
 
+  @override
+  State<Movies> createState() => _MoviesState();
+}
 
-class Play extends StatelessWidget {
+class _MoviesState extends State<Movies> {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseJeux databaseJeux2 = DatabaseJeux();
-    DatabaseJeux.createDatabase();
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Center(
+          child: StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('Movies').snapshots(),
+            builder: ( BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+             if (snapshot.hasError) {
+               print(snapshot);
+                return const Text('Something went wrong');
 
-    return  Builder(
-        builder: (context) => Scaffold(
-          appBar: AppBar(leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)),),
-          body: ListView.builder(itemBuilder: (BuildContext context, int index) { print(databaseJeux2.getCustomers()); return Text(databaseJeux2.foo().toString(),); },
-                itemCount: 5,
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text("Loading");
+              }
+
+              return ListView(
+                children: snapshot.data!.docs.map((document ) {
+                  return ListTile(
+                    title: Text(document['name']),
+                    trailing: Image.network(document['poster']),
+
+
+                  );
+                }).toList(),
+              );
+            },
           ),
         ),
+      ),
 
     );
   }
 }
+
+
+
+
